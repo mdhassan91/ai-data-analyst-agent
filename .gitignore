@@ -1,0 +1,18 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# node / next
+node_modules/
+.next/
+npm-debug.log*
+
+.DS_Store
