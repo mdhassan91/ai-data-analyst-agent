@@ -14,8 +14,16 @@ where it helps, a chart.
 
 Built twice on purpose: first as an **n8n** prototype to prove the idea, then **rewritten from
 scratch in Python** to own every part of it. The frontend didn't change — both backends honour
-the same JSON contract. The full story, including the 14 problems I hit and how I diagnosed
-each one, is in **[docs/build-report.md](docs/build-report.md)**.
+the same JSON contract. The prototype's workflows and why I moved to
+Python are in **[n8n-prototype/](n8n-prototype/)**; the full story, including the 14 problems I hit
+and how I diagnosed each one, is in **[docs/build-report.md](docs/build-report.md)**.
+
+```
+backend/         FastAPI + LangGraph agent, tests, Dockerfile   (phase 2)
+frontend/        Next.js chat UI, works with both backends
+n8n-prototype/   the original n8n workflows                      (phase 1)
+docs/            build report: 14 problems, diagnosed and fixed
+```
 
 ## How it works
 
