@@ -10,7 +10,9 @@ where it helps, a chart.
   and history.
 - **Data:** the [Olist Brazilian e-commerce dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
   (~100,000 orders, 9 tables) in Postgres (Supabase).
-- **Deployed:** Docker container on a Google Cloud Compute Engine e2-micro VM.
+- **Deployed:** backend as a Docker container on a Google Cloud Compute Engine e2-micro VM;
+  frontend on Vercel. The browser only talks to the frontend's `/api/chat` route, which
+  forwards to the backend server-side, so the API token never reaches the browser.
 
 Built twice on purpose: first as an **n8n** prototype to prove the idea, then **rewritten from
 scratch in Python** to own every part of it. The frontend didn't change — both backends honour
@@ -99,7 +101,7 @@ Docker: `docker build -t ai-data-analyst backend && docker run --env-file backen
 
 ```bash
 cd frontend
-cp .env.example .env.local
+cp .env.example .env.local    # BACKEND_URL + BACKEND_API_KEY
 npm install && npm run dev    # http://localhost:3000
 ```
 
@@ -118,8 +120,7 @@ pytest
 - **The validator is a blocklist.** It is conservative (a string literal containing `update`
   is rejected too) and is not the only line of defence it should be: the next step is a
   read-only database role for the API, so even a missed pattern can't write.
-- **The frontend sends the API token from the browser** (`NEXT_PUBLIC_…`), so it is visible
-  to users. Fine for a demo; for production the call should go through a Next.js route
-  handler that keeps the token on the server.
+- **No rate limiting on the public demo yet:** every question costs LLM calls. Next: a
+  per-session limit in the `/api/chat` route.
 - **No evaluation harness yet** — a fixed set of questions with known answers, run on every
   prompt change, is the next thing I'd build.

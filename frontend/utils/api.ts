@@ -1,10 +1,13 @@
 import type { ApiRequest, ApiResponse } from "@/types";
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL ?? "";
+// Default: the app's own /api/chat route, which forwards to the backend server-side.
+// Setting NEXT_PUBLIC_N8N_WEBHOOK_URL calls a backend directly instead (e.g. the
+// n8n prototype on localhost) - then the token is sent from the browser.
+const WEBHOOK_URL = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "/api/chat";
 const AUTH_HEADER_NAME = process.env.NEXT_PUBLIC_N8N_AUTH_HEADER_NAME ?? "X-API-Key";
 const AUTH_TOKEN = process.env.NEXT_PUBLIC_N8N_AUTH_TOKEN ?? "";
 
-const REQUEST_TIMEOUT_MS = 30_000;
+const REQUEST_TIMEOUT_MS = 60_000;
 
 export class ApiError extends Error {
   constructor(message: string, public readonly cause?: unknown) {
@@ -21,12 +24,6 @@ export class ApiTimeoutError extends ApiError {
 }
 
 export async function sendMessage(payload: ApiRequest): Promise<ApiResponse> {
-  if (!WEBHOOK_URL) {
-    throw new ApiError(
-      "No webhook URL is configured. Set NEXT_PUBLIC_N8N_WEBHOOK_URL in .env.local."
-    );
-  }
-
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
