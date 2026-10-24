@@ -1,4 +1,4 @@
--- Audit log written by app/db.py:log_query (docs/build-report.md, challenge 12).
+-- Audit log written by app/db.py:log_query (docs/build-report.md, challenge 14).
 -- Every question, the SQL it produced, and whether it succeeded.
 CREATE TABLE IF NOT EXISTS query_log (
     id            BIGSERIAL PRIMARY KEY,

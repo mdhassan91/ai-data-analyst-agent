@@ -58,7 +58,7 @@ class GraphState(TypedDict, total=False):
     query_rows: Optional[list[list[str]]]
     execution_error: Optional[str]
     final_response: Optional[AgentResponse]
-    logged: Optional[bool]  # LangGraph requires every node to update state (build report, challenge 11)
+    logged: Optional[bool]  # LangGraph requires every node to update state (build report, challenge 13)
 
 
 # ---------------------------------------------------------------------------

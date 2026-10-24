@@ -1,5 +1,7 @@
 # AI Data Analyst Agent
 
+**Live:** https://ai-data-analyst-agent-hazel.vercel.app
+
 Ask an e-commerce database questions in plain English — *"What's the total revenue from
 delivered orders?"* — and get an answer backed by a real SQL query, with the result table and,
 where it helps, a chart.
@@ -17,14 +19,14 @@ where it helps, a chart.
 Built twice on purpose: first as an **n8n** prototype to prove the idea, then **rewritten from
 scratch in Python** to own every part of it. The frontend didn't change — both backends honour
 the same JSON contract. The prototype's workflows and why I moved to
-Python are in **[n8n-prototype/](n8n-prototype/)**; the full story, including the 14 problems I hit
+Python are in **[n8n-prototype/](n8n-prototype/)**; the full story, including the 18 problems I hit
 and how I diagnosed each one, is in **[docs/build-report.md](docs/build-report.md)**.
 
 ```
 backend/         FastAPI + LangGraph agent, tests, Dockerfile   (phase 2)
 frontend/        Next.js chat UI, works with both backends
 n8n-prototype/   the original n8n workflows                      (phase 1)
-docs/            build report: 14 problems, diagnosed and fixed
+docs/            build report: 18 problems, diagnosed and fixed, with screenshots
 ```
 
 ## How it works
@@ -58,22 +60,31 @@ Code: [`backend/app/graph.py`](backend/app/graph.py) (the agent),
 
 ## Engineering decisions
 
+- **Rewrote n8n as a lean Python service.** n8n ran out of memory on two different free-tier
+  hosts (1 GB GCP VM, 512 MB Render), so the limit was the workload, not the host
+  (challenge 9).
 - **The model proposes, code decides.** The LLM never gets write access: SQL passes a
   deterministic validator before it reaches the database
   ([tests](backend/tests/test_validator.py)).
 - **Self-healing database connections.** Supabase's pooler silently closes idle connections, so
   a long-running API eventually picks a dead one. The DB layer recognises that error class,
   discards the connection and retries once with a fresh one — instead of needing a restart
-  ([tests](backend/tests/test_db.py), report challenge 14).
+  ([tests](backend/tests/test_db.py), report challenge 16).
 - **Don't trust a fluent answer.** A "top categories" result looked fine but the numbers were
   too small for 100k orders. Checking row counts against the dataset's documented totals
   found silent partial imports in 5 of 9 tables; they were re-imported with `psql \copy` and
-  verified (challenge 10).
+  verified (challenge 12).
 - **Audit log in the database, not in Google Sheets.** The prototype logged to Sheets — an
   extra API, OAuth and rate limits. The rewrite uses a table in the database it already has
-  ([`sql/query_log.sql`](backend/sql/query_log.sql), challenge 12).
+  ([`sql/query_log.sql`](backend/sql/query_log.sql), challenge 14).
+- **Server-side proxy for the live site.** An https page can't call an http backend, so the
+  browser talks only to the frontend's `/api/chat` route, which forwards server-side — and the
+  API token stays out of the browser (challenge 17).
+- **Cost discipline on a free tier.** A €1 budget alert from day one, a standard (free-tier)
+  disk instead of the default balanced one, and a €0.15 surprise traced by SKU to a default
+  snapshot schedule and removed (challenges 8, 18).
 - **Docker for the deploy.** The VM's new default Python couldn't install pinned dependencies;
-  pinning Python in the image fixed it for good (challenge 13). One Uvicorn worker keeps memory
+  pinning Python in the image fixed it for good (challenge 15). One Uvicorn worker keeps memory
   predictable on an e2-micro.
 
 ## Run it

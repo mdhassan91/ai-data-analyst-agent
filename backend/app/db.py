@@ -33,7 +33,7 @@ def close_pool():
 
 # The managed database's pooler (Supabase) closes connections that sit idle.
 # The app's pool doesn't notice, so the next request gets a dead connection
-# (build report, challenge 14). These errors mean "this connection is gone",
+# (build report, challenge 16). These errors mean "this connection is gone",
 # not "the query is wrong" - discard the connection and try once more.
 DEAD_CONNECTION_ERRORS = (psycopg2.OperationalError, psycopg2.InterfaceError)
 

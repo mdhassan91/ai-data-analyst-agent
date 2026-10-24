@@ -34,8 +34,10 @@ node became a function in [`graph.py`](../backend/app/graph.py):
 - **To own the mechanics, not just configure them.** In n8n the agent loop, tool calling and
   output parsing are built-in nodes. Rewriting them as a LangGraph state machine meant
   understanding and controlling every step.
-- **To run it on a small server.** Self-hosted n8n ran out of memory on free-tier hardware;
-  the FastAPI service fits in a Docker container on a GCP e2-micro VM.
+- **To run it on a small server.** n8n ran out of memory on two free-tier hosts — a 1 GB GCP
+  VM and Render's 512 MB tier — so the limit was n8n's own footprint, not the hosts
+  ([challenge 9](../docs/build-report.md)). The FastAPI service fits in a Docker container on a
+  GCP e2-micro VM.
 - **To drop a fragile dependency.** Logging to Google Sheets meant an extra API, OAuth setup
   and rate limits. The rewrite logs to a table in the database it already uses.
 - **To make it testable and reviewable.** Code can be unit-tested and diffed: the validator,
@@ -43,7 +45,7 @@ node became a function in [`graph.py`](../backend/app/graph.py):
 
 The rewrite also exposed problems the prototype never did: a schema typo in the prompt and
 silent partial imports in 5 of the 9 tables (see [the build report](../docs/build-report.md),
-challenges 9 and 10).
+challenges 11 and 12).
 
 The frontend ([`../frontend`](../frontend)) worked with both versions unchanged, because both
 honour the same JSON contract.
