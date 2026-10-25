@@ -1,6 +1,7 @@
 # AI Data Analyst Agent
 
-**Live:** https://ai-data-analyst-agent-hazel.vercel.app
+**Live:** https://ai-data-analyst-agent-hazel.vercel.app ·
+**Demo video (3 min):** https://youtu.be/W6MjzkagRO0
 
 Ask an e-commerce database questions in plain English — *"What's the total revenue from
 delivered orders?"* — and get an answer backed by a real SQL query, with the result table and,
